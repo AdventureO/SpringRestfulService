@@ -1,107 +1,66 @@
 package com.pryhoda.oleksandr;
 
-
-import org.json.simple.JSONObject;
-import org.springframework.stereotype.Controller;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.io.FileWriter;
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
 
-@Controller
-@RequestMapping("/ticket")
+@RestController
 public class TicketService {
 
-/*    static Set Tickets;
-
-    static {
-        Tickets = new HashSet();
-        Ticket tick;
-        for (int i = 0; i < 10; i++) {
-            tick = new Ticket(i, "Ticket" + i);
-            //writeInFile(tick);
-            Tickets.add(tick);
-        }
+    Map<Integer, Ticket> ticketStorage = new HashMap<Integer, Ticket>();
+    Map<Integer, Event> eventStorage = new HashMap<Integer, Event>();
+    {
+        eventStorage.put(0, new Event("Beach Party", "01/12/17", 0));
+        eventStorage.put(1, new Event("Night Party", "28/04/17", 1));
     }
 
-    @RequestMapping(value = "/{ticketId}", method = RequestMethod.GET, headers = "Accept=text/html", produces = {"text/html "})
-    @ResponseBody
-    public String getTicket(@PathVariable int ticketId) {
-        Iterator iter = Tickets.iterator();
-        while (iter.hasNext()) {
-            Ticket f = (Ticket) iter.next();
-            if (f.getTicketId() == ticketId) return f.toString();
+    public void generateTicketInfo(Ticket ticket, int eventId) {
+        ticket.setUniqueNumber(UUID.randomUUID());
+        ticket.setEvent(eventStorage.get(eventId));
+    }
+
+/*    @RequestMapping(value = "/ticket", method = RequestMethod.GET)
+    public ResponseEntity<Map<Integer, Ticket>> getAllTickets() {
+        return new ResponseEntity<Map<Integer, Ticket>>( ticketStorage, HttpStatus.OK);
+    }*/
+
+    // Get request for all events
+    @RequestMapping(value = "/event", method = RequestMethod.GET)
+    public ResponseEntity<Map<Integer, Event>> getAllEvents() {
+        return new ResponseEntity<Map<Integer, Event>>( eventStorage, HttpStatus.OK);
+    }
+
+    // Get request for event by id
+    @RequestMapping(value = "/event/{eventId}", method = RequestMethod.GET)
+    public  ResponseEntity<Event> getEvent(@PathVariable("eventId") int eventId) {
+        return new ResponseEntity<Event>(eventStorage.get(eventId), HttpStatus.OK);
+    }
+
+    // Post request for registration
+    @RequestMapping(value = "/event/{eventId}/register", method = RequestMethod.POST)
+    public ResponseEntity<Ticket> addTicket(@PathVariable("eventId") int eventId, @RequestBody Ticket ticket) {
+        if (eventId <= eventStorage.size() - 1) {
+            generateTicketInfo(ticket, eventId);
+            ticketStorage.put(ticket.ticketId, ticket);
+            return new ResponseEntity<Ticket>(ticket, HttpStatus.OK);
         }
         return null;
-    }*/
-
-    Map<Integer, Ticket> empData = new HashMap<Integer, Ticket>();
-
-    @RequestMapping(value = "/dummy", method = RequestMethod.GET)
-    public @ResponseBody Ticket getDummyTicket() {
-        Ticket emp = new Ticket(0, "Dummy");
-        Ticket emp1 = new Ticket(1, "Vasyl");
-
-        empData.put(emp.ticketId, emp);
-        empData.put(emp1.ticketId, emp1);
-        return emp;
     }
 
-    @RequestMapping(value = "/{ticketId}", method = RequestMethod.GET)
-    public @ResponseBody Ticket getTicket(@PathVariable("ticketId") int empId) {
-        return empData.get(empId);
+    // Get request for ticket
+    @RequestMapping(value = "/ticket/{ticketId}", method = RequestMethod.GET)
+    public  ResponseEntity<Ticket> getTicket(@PathVariable("ticketId") int ticketId) {
+        return new ResponseEntity<Ticket>(ticketStorage.get(ticketId), HttpStatus.OK);
     }
 
-    @RequestMapping(value = "/create", method = RequestMethod.POST)
-    public @ResponseBody Ticket createTicket(@RequestBody Ticket emp) {
-        empData.put(emp.ticketId, emp);
-        return emp;
+    // Delete ticket request
+    @RequestMapping(value = "/ticket/{ticketId}", method = RequestMethod.DELETE)
+    public  ResponseEntity<Ticket> deleteTicket(@PathVariable("ticketId") int ticketId) {
+        Ticket tempTicket = ticketStorage.remove(ticketId);
+        return new ResponseEntity<Ticket>(tempTicket, HttpStatus.OK);
     }
-
-    @RequestMapping(method = RequestMethod.GET)
-    public @ResponseBody List<Ticket> getAllTickets() {
-        List<Ticket> emps = new ArrayList<Ticket>();
-        Set<Integer> empIdKeys = empData.keySet();
-        for(Integer i : empIdKeys){
-            emps.add(empData.get(i));
-        }
-        return emps;
-    }
-
-/*    @RequestMapping(method = RequestMethod.GET, headers = "Accept=text/html", produces = {"text/html"})
-    @ResponseBody
-    public String getTickets() {
-        Iterator X = Tickets.iterator();
-        String result = "";
-        while (X.hasNext()) {
-            Ticket f = (Ticket) X.next();
-            result += f.toString() + "<br>";
-        }
-        return result;
-    }
-
-    public static void writeInFile(Ticket ticket) {
-        try {
-            JSONObject jsonObject = new JSONObject();
-
-            System.out.println(ticket.toString());
-            jsonObject.put("Id", ticket.ticketId);
-            jsonObject.put("FirstName", ticket.firstName);
-
-            FileWriter fileWriter = new FileWriter("test.json");
-            fileWriter.write(jsonObject.toJSONString());
-            fileWriter.close();
-
-            System.out.println("JSON Object Successfully written to the file!!");
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }*/
-
-/*    @RequestMapping(value = "/list", method = RequestMethod.GET, headers = "Accept=application/json", produces = {"application/json"})
-    @ResponseBody
-    public Set getTicketsList() {
-        return Tickets;
-    }*/
 }
