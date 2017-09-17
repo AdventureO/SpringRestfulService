@@ -1,14 +1,15 @@
 package com.pryhoda.oleksandr;
 
-
 public class Event {
 
-    int eventId;
+    int id;
     String eventName;
     String eventDate;
 
-    public Event(String eventName, String eventDate, int eventId) {
-        this.eventId = eventId;
+    public Event() {
+    }
+
+    public Event(String eventName, String eventDate) {
         this.eventName = eventName;
         this.eventDate = eventDate;
     }
@@ -29,12 +30,12 @@ public class Event {
         this.eventDate = eventDate;
     }
 
-    public int getEventId() {
-        return eventId;
+    public int getId() {
+        return id;
     }
 
-    public void setEventId(int eventId) {
-        this.eventId = eventId;
+    public void setId(int id) {
+        this.id = id;
     }
 
 }

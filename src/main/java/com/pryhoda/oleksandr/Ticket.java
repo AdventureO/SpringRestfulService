@@ -1,32 +1,49 @@
 package com.pryhoda.oleksandr;
 
-
 import java.io.Serializable;
-import java.util.UUID;
+
 
 public class Ticket implements Serializable{
 
-    int ticketId;
+    int id;
     String firstName;
     String lastName;
     int age;
     Event event;
-    UUID uniqueNumber;
+    String uniqueNumber;
 
-    public UUID getUniqueNumber() {
-        return uniqueNumber;
+    public Ticket() {
     }
 
-    public void setUniqueNumber(UUID uniqueNumber) {
+    public Ticket(String firstName, String lastName, int age, Event event, String uniqueNumber) {
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.age = age;
+        this.event = event;
         this.uniqueNumber = uniqueNumber;
     }
 
-    public int getTicketId() {
-        return ticketId;
+    public Ticket(String firstName, String lastName, int age,  String uniqueNumber) {
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.age = age;
+        this.uniqueNumber = uniqueNumber;
     }
 
-    public void setTicketId(int ticketId) {
-        this.ticketId = ticketId;
+    public String getUniqueNumber() {
+        return uniqueNumber;
+    }
+
+    public void setUniqueNumber(String uniqueNumber) {
+        this.uniqueNumber = uniqueNumber;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int ticketId) {
+        this.id = ticketId;
     }
 
     public String getFirstName() {
@@ -60,6 +77,5 @@ public class Ticket implements Serializable{
     public void setEvent(Event event) {
         this.event = event;
     }
-
 
 }
